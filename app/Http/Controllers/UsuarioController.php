@@ -50,15 +50,44 @@ class UsuarioController extends Controller
 
     // Autenticación de usuarios
     public function login(Request $request)
-    {
-        $credentials = $request->only(['numero_identificacion', 'password']);
+{
+    $credentials = $request->only(['numero_identificacion', 'password']);
 
-        if (!$token = JWTAuth::attempt($credentials)) {
+    try {
+        // Obtener el usuario por número de identificación
+        $user = Usuario::where('numero_identificacion', $credentials['numero_identificacion'])->first();
+
+        // Verificar si el usuario existe
+        if (!$user) {
+            return response()->json(['error' => 'El usuario no existe'], 404);
+        }
+
+        // Verificar si la contraseña es válida
+        if (!Hash::check($credentials['password'], $user->password)) {
             return response()->json(['error' => 'Credenciales no válidas'], 401);
         }
 
-        return response()->json(['token' => $token]);
+        // Generar token para el usuario autenticado
+        $token = JWTAuth::fromUser($user);
+
+        // Devolver una respuesta más completa con información del usuario
+        return response()->json([
+            'token' => $token,
+            'user' => [
+                'id' => $user->id,
+                'numero_identificacion' => $user->numero_identificacion,
+                'nombre' => $user->nombre,
+                'apellidos' => $user->apellidos,
+                'rol' => $user->tipo,
+                // Puedes agregar más campos según sea necesario
+            ],
+        ]);
+
+    } catch (\Exception $e) {
+        // Capturar cualquier excepción y devolver un mensaje de error
+        return response()->json(['error' => 'Error en el servidor'], 500);
     }
+}
 
 
     public function getUser(Request $request)

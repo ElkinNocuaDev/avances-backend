@@ -34,7 +34,7 @@ Route::post('usuarios/login', [UsuarioController::class, 'login'])->withoutMiddl
 Route::get('usuarios', [UsuarioController::class, 'index'])->withoutMiddleware(['jwt.auth']);
 
 // Crear un nuevo usuario
-Route::post('usuarios', [UsuarioController::class, 'store']);
+//Route::post('usuarios', [UsuarioController::class, 'store']);
 
 // Mostrar los detalles de un usuario específico
 Route::get('usuarios/{id}', [UsuarioController::class, 'show']);
