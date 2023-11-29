@@ -35,4 +35,16 @@ class Usuario extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    // En el modelo Usuario.php
+    public function historiasMedicasComoPaciente()
+    {
+        return $this->hasMany(HistoriaMedica::class, 'paciente_id');
+    }
+
+    public function historiasMedicasComoProfesional()
+    {
+        return $this->hasMany(HistoriaMedica::class, 'profesional_id');
+    }
+
 }

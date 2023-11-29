@@ -111,7 +111,17 @@ class UsuarioController extends Controller
     {
         // Mostrar detalles de un profesional o paciente
         $usuario = Usuario::findOrFail($id);
-        return response()->json($usuario);
+
+        // Obtener las historias médicas asociadas al usuario
+        $historiasMedicas = [];
+        if ($usuario->tipo == 'paciente') {
+            $historiasMedicas = $usuario->historiasMedicasComoPaciente;
+        } elseif ($usuario->tipo == 'profesional') {
+            $historiasMedicas = $usuario->historiasMedicasComoProfesional;
+        }
+
+        // Puedes personalizar la respuesta según tus necesidades
+        return response()->json(['usuario' => $usuario, 'historiasMedicas' => $historiasMedicas]);
     }
 
     public function update(Request $request, $id)
